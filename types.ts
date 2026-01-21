@@ -11,4 +11,5 @@ export interface MonthData {
   name: string;
   id: string;
   readings: Record<number, string>;
+  chapterCounts: Record<number, number>; // Novo: mapeia o dia para a qtd de capítulos
 }
