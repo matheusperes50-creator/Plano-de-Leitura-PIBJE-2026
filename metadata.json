@@ -1,5 +1,6 @@
 {
   "name": "Plano de Leitura Bíblica 2026",
   "description": "Um rastreador interativo de leitura bíblica baseado no seu plano anual, permitindo marcar capítulos lidos e acompanhar o progresso mensal e total.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

@@ -67,6 +67,34 @@ export default function App() {
     }
   }, []);
 
+  const completeMonth = useCallback((monthId: string) => {
+    const month = MONTHS_CONFIG.find(m => m.id === monthId);
+    if (!month) return;
+    if (confirm(`Deseja marcar todo o mês de ${month.name} como concluído?`)) {
+      setProgress(prev => {
+        const next = { ...prev };
+        Object.keys(month.readings).forEach(day => {
+          next[`${monthId}-${day}`] = true;
+        });
+        return next;
+      });
+    }
+  }, []);
+
+  const clearMonth = useCallback((monthId: string) => {
+    const month = MONTHS_CONFIG.find(m => m.id === monthId);
+    if (!month) return;
+    if (confirm(`Deseja resetar o progresso do mês de ${month.name}?`)) {
+      setProgress(prev => {
+        const next = { ...prev };
+        Object.keys(month.readings).forEach(day => {
+          delete next[`${monthId}-${day}`];
+        });
+        return next;
+      });
+    }
+  }, []);
+
   const currentMonthData = MONTHS_CONFIG[activeTab];
   
   const getMonthProgress = (monthId: string) => {
@@ -205,7 +233,43 @@ export default function App() {
            </button>
         </div>
 
-        {/* Reading Grid */}
+        {/* Month Toolbar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+          <div className="flex flex-col">
+            <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider mb-1">
+              Progresso de {currentMonthData.name}
+            </h3>
+            <span className="text-xs font-semibold text-slate-500">
+              {Object.keys(currentMonthData.readings).filter(day => progress[`${currentMonthData.id}-${day}`]).length} de {Object.keys(currentMonthData.readings).length} dias concluídos ({getMonthProgress(currentMonthData.id)}%)
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => completeMonth(currentMonthData.id)}
+              className="px-4 py-2.5 rounded-2xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition-all flex items-center justify-center gap-2 shadow-md shadow-emerald-100"
+            >
+              <CheckCircle2 size={16} />
+              Preencher Mês
+            </button>
+            <button
+              onClick={() => clearMonth(currentMonthData.id)}
+              className="px-4 py-2.5 rounded-2xl text-xs font-bold text-slate-500 bg-slate-50 hover:bg-slate-100 border border-slate-200 transition-all flex items-center justify-center gap-2"
+            >
+              <RotateCcw size={16} />
+              Resetar Mês
+            </button>
+            <button
+              onClick={resetProgress}
+              className="md:hidden px-4 py-2.5 rounded-2xl text-xs font-bold text-red-500 bg-red-50 hover:bg-red-100 border border-red-100 transition-all flex items-center justify-center gap-2"
+            >
+              <RotateCcw size={16} />
+              Resetar Tudo
+            </button>
+          </div>
+        </div>
+
+         {/* Reading Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-10">
           {Object.entries(currentMonthData.readings).map(([dayStr, passage]) => {
             const dayNum = parseInt(dayStr);
